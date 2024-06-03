@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zad10", "Zad10\Zad10.csproj", "{D2D85818-466F-4BBB-B7AC-1C0E809F9850}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zad10Tests", "Zad10Tests\Zad10Tests.csproj", "{0A26D018-8846-4C22-8959-745278637F4C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2D85818-466F-4BBB-B7AC-1C0E809F9850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2D85818-466F-4BBB-B7AC-1C0E809F9850}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2D85818-466F-4BBB-B7AC-1C0E809F9850}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2D85818-466F-4BBB-B7AC-1C0E809F9850}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A26D018-8846-4C22-8959-745278637F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A26D018-8846-4C22-8959-745278637F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A26D018-8846-4C22-8959-745278637F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A26D018-8846-4C22-8959-745278637F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
