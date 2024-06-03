@@ -11,6 +11,5 @@ public class PatientInfoMedicamentReturnDto
     [Required]
     public int Dose { get; set; }
     [Required, MaxLength(100)]
-    public string Description { get; set; }
-    public DoctorPatientInfoReturnDto Doctor { get; set; }
+    public string? Description { get; set; }
 }

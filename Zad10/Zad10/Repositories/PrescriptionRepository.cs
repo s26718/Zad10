@@ -55,7 +55,7 @@ public class PrescriptionRepository : IPrescriptionRepository
             PrescriptionMedicaments = request.prescriptionInfo.medicaments
                 .Select(prescriptionMedicament => new PrescriptionMedicament
                 {
-                    IdMedicament = prescriptionMedicament.idMedicament,
+                    IdMedicament = prescriptionMedicament.IdMedicament,
                     Dose = prescriptionMedicament.Dose,
                     Details = prescriptionMedicament.Description
                 }).ToList()
@@ -68,6 +68,32 @@ public class PrescriptionRepository : IPrescriptionRepository
         var medicament = await _context.Medicaments.FirstOrDefaultAsync(medicament => medicament.Id == idMedicament);
 
         return medicament != null;
+    }
+
+    public async Task<IEnumerable<Prescription>> GetPrescriptionsForPatientByIdAsync(int idPatient)
+    {
+        var prescriptions = await _context.Prescriptions
+            .Select(p => p)
+            .Where(p => p.IdPatient == idPatient)
+            .ToListAsync();
+        return prescriptions;
+    }
+
+    public async Task<IEnumerable<Medicament>> GetMedicamentsForPrescriptionByIdAsync(int idPrescription)
+    {
+        var medicaments = await _context.PrescriptionMedicaments
+            .Where(pm => pm.IdPrescription == idPrescription)
+            .Select(pm => pm.Medicament)
+            .ToListAsync();
+        return medicaments;
+    }
+
+    public async Task<List<PrescriptionMedicament>> GetPrescriptionMedicaments(int idPrescription,
+        int idMedicament)
+    {
+        return await _context.PrescriptionMedicaments
+            .Where(pm => pm.IdPrescription == idPrescription && pm.IdMedicament == idMedicament)
+            .ToListAsync();
     }
 
     public async Task SaveChangesAsync()

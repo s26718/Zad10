@@ -13,5 +13,6 @@ public class PatientInfoReturnDto
     public string LastName { get; set; }
     [Required]
     public DateTime BirthDate { get; set; }
-    
+
+    [Required] public List<ReturnPrescriptionDto> Prescriptions { get; set; } = new List<ReturnPrescriptionDto>();
 }

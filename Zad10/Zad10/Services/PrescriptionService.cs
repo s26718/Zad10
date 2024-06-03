@@ -1,6 +1,4 @@
-using System.Transactions;
 using Zad10.Dtos;
-
 using Zad10.Exceptions;
 using Zad10.Models;
 using Zad10.Repositories;
@@ -19,7 +17,6 @@ public class PrescriptionService : IPrescriptionService
     
     public async Task HandleNewPrescriptionRequestAsync(CreatePrescriptionRequestDto createPrescriptionRequestDto)
     {
-
         var doctor =
             await _prescriptionRepository.GetDoctorByIdAsync(createPrescriptionRequestDto.prescriptionInfo.IdDoctor);
         if (doctor == null)
@@ -40,7 +37,7 @@ public class PrescriptionService : IPrescriptionService
 
         foreach (var prescriptionMedicament in createPrescriptionRequestDto.prescriptionInfo.medicaments)
         {
-            if (!await _prescriptionRepository.MedicamentExistsAsync(prescriptionMedicament.idMedicament))
+            if (!await _prescriptionRepository.MedicamentExistsAsync(prescriptionMedicament.IdMedicament))
             {
                 throw new NoSuchMedicamentException();
             }
@@ -56,5 +53,64 @@ public class PrescriptionService : IPrescriptionService
         await _prescriptionRepository.SaveChangesAsync();
 
     }
-    //TODO public async Task<PatientInfoReturnDto> GetPatientInfoAsync(int idPatient);
+
+    public async Task<PatientInfoReturnDto> GetPatientInfoAsync(int idPatient)
+    {
+        
+        var patient = await _prescriptionRepository.GetPatientByIdAsync(idPatient);
+        if (patient == null)
+        {
+            throw new NoSuchPatientException();
+        }
+
+        var prescriptions = await _prescriptionRepository.GetPrescriptionsForPatientByIdAsync(idPatient);
+        
+
+        PatientInfoReturnDto patientInfo = new PatientInfoReturnDto
+        {
+            IdPatient = patient.Id,
+            FirstName = patient.FirstName,
+            LastName = patient.LastName,
+            BirthDate = patient.Birthdate,
+        };
+        foreach (var prescription in prescriptions)
+        {
+            var doctor = await _prescriptionRepository.GetDoctorByIdAsync(prescription.IdDoctor);
+            
+            var medicaments = await _prescriptionRepository.GetMedicamentsForPrescriptionByIdAsync(prescription.Id);
+
+            foreach (var medicament in medicaments)
+            {
+                var prescriptionMedicaments =
+                    await _prescriptionRepository.GetPrescriptionMedicaments(prescription.Id, medicament.Id);
+                patientInfo.Prescriptions.Add(
+                    new ReturnPrescriptionDto
+                    {
+                        Doctor = new DoctorPatientInfoReturnDto
+                        {
+                            IdDoctor = doctor.Id,
+                            FirstName = doctor.FirstName
+                        },
+                        IdPrescription = prescription.Id,
+                        Date = prescription.Date,
+                        DueDate = prescription.DueDate,
+                        Medicaments = prescriptionMedicaments
+                            .Select(pm => new PatientInfoMedicamentReturnDto
+                            {
+                                IdMedicament = pm.IdMedicament,
+                                Name = medicament.Name,
+                                Dose = pm.Dose,
+                                Description = pm.Details
+                            })
+                            .ToList()
+                        
+                    
+                    }
+                );
+            }
+            
+        }
+
+        return patientInfo;
+    }
 }

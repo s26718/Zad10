@@ -42,8 +42,31 @@ public class PrescriptionController : ControllerBase
         {
             return StatusCode(StatusCodes.Status400BadRequest, "date mismatch error");
         }
+        catch (DbUpdateException exc)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "server error");
+        }
 
         return Ok();
     }
+    [HttpGet("patients/{patientId:int}")]
+    public async Task<IActionResult> GetPatientInfoAsync(int patientId)
+    {
+        
+        try
+        {
+            return Ok(await _prescriptionService.GetPatientInfoAsync(patientId));
+        }
+        catch (NoSuchPatientException exc)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, "no patient with such id exists");
+        }
+        catch (DbUpdateException exc)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "server error");
+        }
+
+    }
+    
 
 }

@@ -5,5 +5,5 @@ namespace Zad10.Services;
 public interface IPrescriptionService
 {
     Task HandleNewPrescriptionRequestAsync(CreatePrescriptionRequestDto createPrescriptionRequestDto);
-    //Task<PatientInfoReturnDto> GetPatientInfoAsync(int idPatient);
+    Task<PatientInfoReturnDto> GetPatientInfoAsync(int idPatient);
 }
