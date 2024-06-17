@@ -4,11 +4,12 @@ namespace Zad10.Models;
 public class PrescriptionContext : DbContext
 {
     
-    public virtual DbSet<Medicament> Medicaments { get; set; }
-    public virtual DbSet<Prescription> Prescriptions { get; set; }
-    public virtual DbSet<Patient> Patients { get; set; }
-    public virtual DbSet<Doctor> Doctors { get; set; }
-    public virtual DbSet<PrescriptionMedicament> PrescriptionMedicaments { get; set; }
+    public DbSet<Medicament> Medicaments { get; set; }
+    public DbSet<Prescription> Prescriptions { get; set; }
+    public DbSet<Patient> Patients { get; set; }
+    public DbSet<Doctor> Doctors { get; set; }
+    public DbSet<AppUser> Users { get; set; }
+    public DbSet<PrescriptionMedicament> PrescriptionMedicaments { get; set; }
     public PrescriptionContext() 
     {
     }

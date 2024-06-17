@@ -1,6 +1,7 @@
 using System.Data.Entity.Core.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Zad10.Dtos;
+using Zad10.Helpers;
 using Zad10.Models;
 
 namespace Zad10.Repositories;
@@ -39,7 +40,7 @@ public class PrescriptionRepository : IPrescriptionRepository
             LastName = patientDto.LastName,
             Birthdate = patientDto.BirthDate
         };
-        _context.Patients.Add(newPatient);
+        await _context.Patients.AddAsync(newPatient);
         await _context.SaveChangesAsync();
         return await _context.Patients.FirstOrDefaultAsync(p => p.Id == newPatient.Id);
     }
@@ -96,8 +97,39 @@ public class PrescriptionRepository : IPrescriptionRepository
             .ToListAsync();
     }
 
+    public async Task<AppUser> RegisterUserToDbAsync(RegisterRequest registerRequest, Tuple<string, string> hashedPasswordAndSalt)
+    {
+        var user = new AppUser()
+        {
+            Email = registerRequest.Email,
+            Login = registerRequest.Login,
+            Password = hashedPasswordAndSalt.Item1,
+            Salt = hashedPasswordAndSalt.Item2,
+            RefreshToken = SecurityHelpers.GenerateRefreshToken(),
+            RefreshTokenExp = DateTime.Now.AddDays(1)
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        return user;
+    }
+
+    public async Task<AppUser?> GetUserByLoginAsync(string login)
+    {
+        AppUser? user = await _context.Users.Where(u => u.Login == login)
+            .FirstOrDefaultAsync();
+        return user;
+    }
+
+    public async Task<AppUser?> GetUserByRefreshTokenAsync(string refreshToken)
+    {
+        AppUser? user = await _context.Users.Where(u => u.RefreshToken == refreshToken)
+            .FirstOrDefaultAsync();
+        return user;
+    }
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();
     }
+    
 }

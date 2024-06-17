@@ -162,6 +162,11 @@ namespace Zad10Tests.Fakes
             return Task.FromResult(prescriptionMedicaments);
         }
 
+        public Task<AppUser> RegisterUserToDbAsync(RegisterRequest registerRequest, Tuple<string, string> hashedPasswordAndSalt)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SaveChangesAsync()
         {
             return Task.CompletedTask;

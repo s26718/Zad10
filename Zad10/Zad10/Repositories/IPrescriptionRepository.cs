@@ -15,4 +15,7 @@ public interface IPrescriptionRepository
     Task<IEnumerable<Prescription>> GetPrescriptionsForPatientByIdAsync(int idPatient);
     Task<IEnumerable<Medicament>> GetMedicamentsForPrescriptionByIdAsync(int idPrescription);
     Task<List<PrescriptionMedicament>> GetPrescriptionMedicaments(int idPrescription, int idMedicament);
+    Task<AppUser> RegisterUserToDbAsync(RegisterRequest registerRequest, Tuple<string, string> hashedPasswordAndSalt);
+    Task<AppUser?> GetUserByLoginAsync(string login);
+    Task<AppUser?> GetUserByRefreshTokenAsync(string refreshToken);
 }

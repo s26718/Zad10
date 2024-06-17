@@ -1,9 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
+using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Zad10.Dtos;
 using Zad10.Exceptions;
 using Zad10.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Zad10.Helpers;
+using Zad10.Models;
 
 namespace Zad10;
 
@@ -19,53 +24,59 @@ public class PrescriptionController : ControllerBase
         _prescriptionService = prescriptionService;
     }
 
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterUser(RegisterRequest registerRequest)
+    {
+        await _prescriptionService.RegisterUserAsync(registerRequest);
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginRequest loginRequest)
+    {
+        
+        var (accessToken, refreshToken) = await _prescriptionService.ValidateLoginAsync(loginRequest);
+        
+        return Ok(new
+        {
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        });
+        
+        
+    }
+
+    [Authorize(AuthenticationSchemes = "IgnoreTokenExpirationScheme")]
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(RefreshTokenRequest refreshTokenRequest)
+    {
+        
+        var (accessToken, refreshToken) = await _prescriptionService.RefreshLoginAsync(refreshTokenRequest);
+        
+        return Ok(new
+        {
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        });
+        
+        
+    }
+
+    [Authorize]
     [HttpPost("new_prescription")]
     public async Task<IActionResult> CreateNewPrescriptionAsync(CreatePrescriptionRequestDto request)
     {
-        try
-        {
-            await _prescriptionService.HandleNewPrescriptionRequestAsync(request);
-        }
-        catch (NoSuchDoctorException exc)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, "no doctor with such id exists");
-        }
-        catch (TooManyMedicamentsException exc)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, "max 10 of medicaments on one prescription");
-        }
-        catch (NoSuchMedicamentException exc)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, "one of the medicaments does not exits");
-        }
-        catch (DateMismatchException exc)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, "date mismatch error");
-        }
-        catch (DbUpdateException exc)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, "server error");
-        }
-
+        await _prescriptionService.HandleNewPrescriptionRequestAsync(request);
         return Ok();
     }
+    [Authorize]
     [HttpGet("patients/{patientId:int}")]
     public async Task<IActionResult> GetPatientInfoAsync(int patientId)
     {
-        
-        try
-        {
-            return Ok(await _prescriptionService.GetPatientInfoAsync(patientId));
-        }
-        catch (NoSuchPatientException exc)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, "no patient with such id exists");
-        }
-        catch (DbUpdateException exc)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, "server error");
-        }
 
+        return Ok(await _prescriptionService.GetPatientInfoAsync(patientId));
     }
     
 
